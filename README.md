@@ -133,6 +133,7 @@ Financial_Fraud_Detection/
 ├── venv/
 │
 └── README.md
+```
 ## Application Screenshots
 
 ### Home - Fraud Detection
