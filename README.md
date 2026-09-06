@@ -134,7 +134,7 @@ Financial_Fraud_Detection/
 │
 └── README.md
 ```
-## Application Screenshots
+## Application 
 
 ### Home - Fraud Detection
 
