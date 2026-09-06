@@ -133,3 +133,28 @@ Financial_Fraud_Detection/
 ├── venv/
 │
 └── README.md
+## Application Screenshots
+
+### Home - Fraud Detection
+
+The home page allows users to enter transaction details and receive an ML-based fraud prediction.
+
+### User Dashboard
+
+The user dashboard displays transaction statistics, fraud/legitimate counts and fraud analysis through charts.
+
+### Transaction History
+
+Users can view their previous transaction predictions, fraud probability and risk level.
+
+### Admin Dashboard
+
+The admin dashboard provides overall transaction statistics, fraud analysis and recent transaction monitoring.
+
+### Admin Transaction History
+
+Admins can view transaction records across all users.
+
+### CSV Bulk Upload
+
+Admins can upload a CSV file and perform fraud prediction on multiple transactions.
