@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Transaction History</title>
+
+    <style>
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f4f7fb;
+            color: #1f2937;
+        }
+
+        .navbar {
+            background: #172554;
+            color: white;
+            padding: 18px 8%;
+        }
+
+        .navbar-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 25px;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            font-size: 15px;
+            font-weight: bold;
+        }
+
+        .nav-links a:hover {
+            text-decoration: underline;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 40px auto;
+        }
+
+        h1 {
+            color: #172554;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .table-card {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            background: #172554;
+            color: white;
+            padding: 14px;
+            text-align: left;
+            white-space: nowrap;
+        }
+
+        td {
+            padding: 13px;
+            border-bottom: 1px solid #e5e7eb;
+            white-space: nowrap;
+        }
+
+        tr:hover {
+            background: #f8fafc;
+        }
+
+        .fraud {
+            display: inline-block;
+            background: #fee2e2;
+            color: #dc2626;
+            padding: 6px 10px;
+            border-radius: 20px;
+            font-weight: bold;
+        }
+
+        .legitimate {
+            display: inline-block;
+            background: #dcfce7;
+            color: #16a34a;
+            padding: 6px 10px;
+            border-radius: 20px;
+            font-weight: bold;
+        }
+
+        .risk-high {
+            color: #dc2626;
+            font-weight: bold;
+        }
+
+        .risk-medium {
+            color: #d97706;
+            font-weight: bold;
+        }
+
+        .risk-low {
+            color: #16a34a;
+            font-weight: bold;
+        }
+
+        .empty {
+            text-align: center;
+            color: #64748b;
+            padding: 30px;
+            font-size: 17px;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 50px;
+            padding-bottom: 30px;
+            color: #94a3b8;
+            font-size: 14px;
+        }
+
+        @media (max-width: 700px) {
+
+            .navbar {
+                padding: 15px;
+            }
+
+            .navbar-content {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .nav-links {
+                gap: 12px;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .logo {
+                font-size: 20px;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+    <!-- Navigation Bar -->
+
+    <div class="navbar">
+
+        <div class="navbar-content">
+
+            <div class="logo">
+                AI Fraud Detection System
+            </div>
+
+            <div class="nav-links">
+
+                {% if user.is_authenticated %}
+
+                    <a href="/">Home</a>
+
+                    <a href="/dashboard/">
+                        Dashboard
+                    </a>
+
+                    <a href="/history/">
+                        History
+                    </a>
+
+                    {% if user.is_staff %}
+
+                        <a href="/admin-dashboard/">
+                            Admin Dashboard
+                        </a>
+
+                        <a href="/csv-upload/">
+                            CSV Upload
+                        </a>
+
+                    {% endif %}
+
+                    <a href="/logout/">
+                        Logout
+                    </a>
+
+                {% else %}
+
+                    <a href="/login/">
+                        Login
+                    </a>
+
+                    <a href="/register/">
+                        Register
+                    </a>
+
+                {% endif %}
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- Transaction History -->
+
+    <div class="container">
+
+        <h1>
+            Transaction History
+        </h1>
+
+
+        <div class="table-card">
+
+
+            {% if transactions %}
+
+
+            <table>
+
+                <thead>
+
+                    <tr>
+
+                        <th>Amount</th>
+
+                        <th>Hour</th>
+
+                        <th>Distance (km)</th>
+
+                        <th>Fraud Probability</th>
+
+                        <th>Prediction</th>
+
+                        <th>Risk Level</th>
+
+                        <th>Date & Time</th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody>
+
+
+                    {% for transaction in transactions %}
+
+
+                    <tr>
+
+
+                        <td>
+                            ₹{{ transaction.amount|floatformat:2 }}
+                        </td>
+
+
+                        <td>
+                            {{ transaction.hour }}
+                        </td>
+
+
+                        <td>
+                            {{ transaction.distance_km|floatformat:2 }}
+                        </td>
+
+
+                        <td>
+                            {{ transaction.fraud_probability|floatformat:2 }}%
+                        </td>
+
+
+                        <td>
+
+                            {% if transaction.prediction == "Fraudulent" %}
+
+                                <span class="fraud">
+                                    🔴 Fraudulent
+                                </span>
+
+                            {% else %}
+
+                                <span class="legitimate">
+                                    🟢 Legitimate
+                                </span>
+
+                            {% endif %}
+
+                        </td>
+
+
+                        <td>
+
+                            {% if transaction.fraud_probability >= 70 %}
+
+                                <span class="risk-high">
+                                    🔴 High Risk
+                                </span>
+
+                            {% elif transaction.fraud_probability >= 30 %}
+
+                                <span class="risk-medium">
+                                    🟠 Medium Risk
+                                </span>
+
+                            {% else %}
+
+                                <span class="risk-low">
+                                    🟢 Low Risk
+                                </span>
+
+                            {% endif %}
+
+                        </td>
+
+
+                        <td>
+                            {{ transaction.created_at|date:"d M Y, H:i" }}
+                        </td>
+
+
+                    </tr>
+
+
+                    {% endfor %}
+
+
+                </tbody>
+
+            </table>
+
+
+            {% else %}
+
+
+            <div class="empty">
+
+                No transactions found.
+
+            </div>
+
+
+            {% endif %}
+
+
+        </div>
+
+
+        <div class="footer">
+
+            AI-Based Financial Fraud Detection Using Machine Learning
+
+        </div>
+
+
+    </div>
+
+
+</body>
+
+</html>

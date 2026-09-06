@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <title>CSV Upload - AI Fraud Detection</title>
+
+    <style>
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f4f7fb;
+            color: #172554;
+        }
+
+        .navbar {
+            background: #172554;
+            color: white;
+            padding: 18px 8%;
+        }
+
+        .navbar-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 25px;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            font-size: 15px;
+            font-weight: bold;
+        }
+
+        .nav-links a:hover {
+            text-decoration: underline;
+        }
+
+        .container {
+            max-width: 850px;
+            margin: 60px auto;
+            padding: 0 20px;
+        }
+
+        .title {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .title h1 {
+            font-size: 38px;
+            margin-bottom: 10px;
+        }
+
+        .title p {
+            color: #64748b;
+            font-size: 17px;
+        }
+
+        .upload-card {
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+            text-align: center;
+        }
+
+        .upload-card h2 {
+            margin-bottom: 25px;
+        }
+
+        input[type="file"] {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 25px;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            box-sizing: border-box;
+        }
+
+        button {
+            background: #172554;
+            color: white;
+            border: none;
+            padding: 13px 30px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #1e3a8a;
+        }
+
+        .error {
+            background: #fee2e2;
+            color: #b91c1c;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+            font-weight: bold;
+        }
+
+        .result {
+            margin-top: 30px;
+            background: #f0fdf4;
+            padding: 25px;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .result h3 {
+            margin-bottom: 20px;
+        }
+
+        .result p {
+            font-size: 17px;
+            font-weight: bold;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 70px;
+            padding-bottom: 30px;
+            color: #94a3b8;
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+    <!-- Navigation Bar -->
+
+    <div class="navbar">
+
+        <div class="navbar-content">
+
+            <div class="logo">
+                AI Fraud Detection System
+            </div>
+
+            <div class="nav-links">
+
+                <a href="/">Home</a>
+
+                <a href="/dashboard/">Dashboard</a>
+
+                <a href="/history/">History</a>
+
+                <a href="/admin-dashboard/">Admin Dashboard</a>
+
+                <a href="/logout/">Logout</a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- CSV Upload -->
+
+    <div class="container">
+
+
+        <div class="title">
+
+            <h1>CSV Fraud Detection</h1>
+
+            <p>
+                Upload transaction data for automatic fraud detection
+            </p>
+
+        </div>
+
+
+        <div class="upload-card">
+
+
+            <h2>Upload Transaction CSV</h2>
+
+
+            {% if error %}
+
+            <div class="error">
+                {{ error }}
+            </div>
+
+            {% endif %}
+
+
+            <form method="POST" enctype="multipart/form-data">
+
+                {% csrf_token %}
+
+                <input
+                    type="file"
+                    name="csv_file"
+                    accept=".csv"
+                    required
+                >
+
+                <button type="submit">
+                    Upload & Detect Fraud
+                </button>
+
+            </form>
+
+
+            {% if result %}
+
+            <div class="result">
+
+                <h3>Detection Completed</h3>
+
+                <p>
+                    Total Transactions:
+                    {{ result.total }}
+                </p>
+
+                <p>
+                    Fraudulent Transactions:
+                    {{ result.fraud }}
+                </p>
+
+                <p>
+                    Legitimate Transactions:
+                    {{ result.legitimate }}
+                </p>
+
+            </div>
+             {% if result and result.predictions %}
+
+<div class="result" style="margin-top: 30px;">
+
+    <h3>Transaction Prediction Results</h3>
+
+    <div style="overflow-x: auto;">
+
+        <table style="width: 100%; border-collapse: collapse;">
+
+            <thead>
+
+                <tr style="background: #172554; color: white;">
+
+                    <th style="padding: 12px;">#</th>
+                    <th style="padding: 12px;">Amount</th>
+                    <th style="padding: 12px;">Fraud Probability</th>
+                    <th style="padding: 12px;">Prediction</th>
+
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+                {% for item in result.predictions %}
+
+                <tr style="border-bottom: 1px solid #e2e8f0;">
+
+                    <td style="padding: 12px;">
+                        {{ forloop.counter }}
+                    </td>
+
+                    <td style="padding: 12px;">
+                        ₹{{ item.amount|floatformat:2 }}
+                    </td>
+
+                    <td style="padding: 12px;">
+                        {{ item.fraud_probability|floatformat:2 }}%
+                    </td>
+
+                    <td style="padding: 12px; font-weight: bold;">
+                        {{ item.prediction }}
+                    </td>
+
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+{% endif %}
+            {% endif %}
+
+
+        </div>
+
+
+    </div>
+
+
+    <!-- Footer -->
+
+    <div class="footer">
+
+        AI-Based Financial Fraud Detection Using Machine Learning
+
+    </div>
+
+
+</body>
+
+</html>

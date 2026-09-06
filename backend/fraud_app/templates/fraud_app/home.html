@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>AI Fraud Detection</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f4f7fb;
+            color: #1f2937;
+        }
+
+        .navbar {
+            background: #172554;
+            color: white;
+            padding: 18px 8%;
+        }
+
+        .navbar-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 25px;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            font-size: 15px;
+            font-weight: bold;
+        }
+
+        .nav-links a:hover {
+            text-decoration: underline;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1000px;
+            margin: 40px auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            margin-bottom: 10px;
+            color: #172554;
+        }
+
+        .header p {
+            color: #64748b;
+        }
+
+        .card {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group label {
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+
+        input,
+        select {
+            padding: 12px;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            font-size: 15px;
+        }
+
+        input:focus,
+        select:focus {
+            outline: none;
+            border-color: #2563eb;
+        }
+
+        .button-area {
+            margin-top: 25px;
+            text-align: center;
+        }
+
+        button {
+            padding: 13px 30px;
+            border: none;
+            border-radius: 8px;
+            background: #2563eb;
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #1d4ed8;
+        }
+
+        .result {
+            margin-top: 30px;
+            padding: 25px;
+            border-radius: 12px;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            text-align: center;
+        }
+
+        .result h2 {
+            margin-top: 0;
+            color: #172554;
+        }
+
+        .probability {
+            font-size: 32px;
+            font-weight: bold;
+            margin: 15px 0;
+        }
+
+        .fraud {
+            color: #dc2626;
+        }
+
+        .legitimate {
+            color: #16a34a;
+        }
+
+        .decision {
+            font-size: 20px;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+
+        .threshold {
+            color: #64748b;
+        }
+
+        .risk-high {
+            color: #dc2626;
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .risk-medium {
+            color: #d97706;
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .risk-low {
+            color: #16a34a;
+            font-size: 20px;
+            font-weight: bold;
+        }
+        .fraud-alert {
+    margin-top: 20px;
+    padding: 15px;
+    background: #fee2e2;
+    border: 1px solid #fecaca;
+    border-radius: 8px;
+    color: #b91c1c;
+    font-size: 17px;
+    font-weight: bold;
+ }
+
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            color: #94a3b8;
+            font-size: 14px;
+        }
+
+        @media (max-width: 700px) {
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .navbar {
+                text-align: center;
+                font-size: 20px;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+    <!-- Navigation Bar -->
+
+    <div class="navbar">
+
+        <div class="navbar-content">
+
+            <div class="logo">
+                AI Fraud Detection System
+            </div>
+
+            <div class="nav-links">
+
+                {% if user.is_authenticated %}
+
+                    <a href="/">Home</a>
+                    <a href="/dashboard/">Dashboard</a>
+                    <a href="/history/">History</a>
+
+                    {% if user.is_staff %}
+                        <a href="/admin-dashboard/">Admin Dashboard</a>
+                        <a href="/csv-upload/">CSV Upload</a>
+                    {% endif %}
+
+                    <a href="/logout/">Logout</a>
+
+                {% else %}
+
+                    <a href="/login/">Login</a>
+                    <a href="/register/">Register</a>
+
+                {% endif %}
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- Main Content -->
+
+    <div class="container">
+
+
+        <div class="header">
+
+            <h1>Financial Transaction Fraud Detection</h1>
+
+            <p>
+                Enter transaction details to analyze fraud risk using Machine Learning.
+            </p>
+
+        </div>
+
+
+        <div class="card">
+
+
+            <form method="POST">
+
+                {% csrf_token %}
+
+
+                <div class="form-grid">
+
+
+                    <div class="form-group">
+
+                        <label>Transaction Amount</label>
+
+                        <input
+                            type="number"
+                            name="amount"
+                            step="0.01"
+                            required
+                        >
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label>Transaction Hour (0-23)</label>
+
+                        <input
+                            type="number"
+                            name="hour"
+                            min="0"
+                            max="23"
+                            required
+                        >
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label>Distance (km)</label>
+
+                        <input
+                            type="number"
+                            name="distance_km"
+                            step="0.01"
+                            required
+                        >
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label>Device Trust Score (0-1)</label>
+
+                        <input
+                            type="number"
+                            name="device_score"
+                            step="0.01"
+                            min="0"
+                            max="1"
+                            required
+                        >
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label>International Transaction</label>
+
+                        <select name="international">
+
+                            <option value="0">No</option>
+                            <option value="1">Yes</option>
+
+                        </select>
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label>Merchant Risk Score (0-1)</label>
+
+                        <input
+                            type="number"
+                            name="merchant_risk"
+                            step="0.01"
+                            min="0"
+                            max="1"
+                            required
+                        >
+
+                    </div>
+
+
+                </div>
+
+
+                <div class="button-area">
+
+                    <button type="submit">
+                        Check Transaction
+                    </button>
+
+                </div>
+
+
+            </form>
+
+
+            {% if result %}
+
+            <div class="result">
+
+                <h2>Prediction Result</h2>
+
+
+                <div class="probability
+                    {% if result.prediction == 'Fraudulent' %}
+                        fraud
+                    {% else %}
+                        legitimate
+                    {% endif %}
+                ">
+
+                    {{ result.fraud_probability }}%
+
+                </div>
+
+
+                <div class="decision
+                    {% if result.prediction == 'Fraudulent' %}
+                        fraud
+                    {% else %}
+                        legitimate
+                    {% endif %}
+                ">
+
+                    {{ result.prediction }}
+
+                </div>
+
+
+                <p class="threshold">
+
+                    Decision Threshold:
+                    <strong>{{ result.threshold }}%</strong>
+
+                </p>
+
+
+                {% if result.risk_level == "High Risk" %}
+
+    <p class="risk-high">
+        🔴 <strong>High Risk</strong>
+    </p>
+
+{% elif result.risk_level == "Medium Risk" %}
+
+    <p class="risk-medium">
+        🟠 <strong>Medium Risk</strong>
+    </p>
+
+{% else %}
+
+    <p class="risk-low">
+        🟢 <strong>Low Risk</strong>
+    </p>
+
+{% endif %}
+{% if result.prediction == "Fraudulent" %}
+
+    <p class="fraud-alert">
+        ⚠️ Fraud Alert: This transaction appears suspicious.
+    </p>
+
+{% endif %}
+
+            </div>
+
+            {% endif %}
+
+
+        </div>
+
+
+        <div class="footer">
+
+            AI-Based Financial Fraud Detection Using Machine Learning
+
+        </div>
+
+
+    </div>
+
+
+</body>
+
+</html>

@@ -1,0 +1,5 @@
+amount,hour,distance_km,device_score,international,merchant_risk
+15000,2,45,0.20,1,0.75
+800,14,3,0.90,0,0.10
+12000,1,35,0.25,1,0.80
+700,15,4,0.95,0,0.05

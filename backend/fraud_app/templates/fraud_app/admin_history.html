@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Admin Transaction History</title>
+
+    <style>
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f4f7fb;
+            color: #172554;
+        }
+
+        .navbar {
+            background: #172554;
+            color: white;
+            padding: 18px 8%;
+        }
+
+        .navbar-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 25px;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            font-size: 15px;
+            font-weight: bold;
+        }
+
+        .nav-links a:hover {
+            text-decoration: underline;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1300px;
+            margin: 50px auto;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 35px;
+        }
+
+        .table-card {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            background: #172554;
+            color: white;
+            padding: 14px;
+            text-align: center;
+        }
+
+        td {
+            padding: 13px;
+            border-bottom: 1px solid #e2e8f0;
+            text-align: center;
+        }
+
+        .fraud {
+            color: #dc2626;
+            font-weight: bold;
+        }
+
+        .legitimate {
+            color: #16a34a;
+            font-weight: bold;
+        }
+
+        .high {
+            color: #dc2626;
+            font-weight: bold;
+        }
+
+        .medium {
+            color: #d97706;
+            font-weight: bold;
+        }
+
+        .low {
+            color: #16a34a;
+            font-weight: bold;
+        }
+
+        .empty {
+            text-align: center;
+            color: #64748b;
+            padding: 30px;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 60px;
+            padding-bottom: 30px;
+            color: #94a3b8;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+
+    <div class="navbar">
+
+        <div class="navbar-content">
+
+            <div class="logo">
+                AI Fraud Detection System
+            </div>
+
+            <div class="nav-links">
+
+                <a href="/">Home</a>
+                <a href="/dashboard/">Dashboard</a>
+                <a href="/history/">History</a>
+                <a href="/admin-dashboard/">Admin Dashboard</a>
+                <a href="/csv-upload/">CSV Upload</a>
+                <a href="/logout/">Logout</a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div class="container">
+
+        <h1>All Users Transaction History</h1>
+
+
+        <div class="table-card">
+
+            {% if transactions %}
+
+            <table>
+
+                <thead>
+
+                    <tr>
+
+                        <th>ID</th>
+                        <th>User</th>
+                        <th>Amount</th>
+                        <th>Hour</th>
+                        <th>Distance (km)</th>
+                        <th>Fraud Probability</th>
+                        <th>Prediction</th>
+                        <th>Risk Level</th>
+                        <th>Date & Time</th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody>
+
+                    {% for transaction in transactions %}
+
+                    <tr>
+
+                        <td>
+                            {{ transaction.id }}
+                        </td>
+
+                        <td>
+                            {{ transaction.user.username }}
+                        </td>
+
+                        <td>
+                            ₹{{ transaction.amount }}
+                        </td>
+
+                        <td>
+                            {{ transaction.hour }}
+                        </td>
+
+                        <td>
+                            {{ transaction.distance_km }}
+                        </td>
+
+                        <td>
+                            {{ transaction.fraud_probability|floatformat:2 }}%
+                        </td>
+
+                        <td>
+
+                            {% if transaction.prediction == "Fraudulent" %}
+
+                                <span class="fraud">
+                                    🔴 Fraudulent
+                                </span>
+
+                            {% else %}
+
+                                <span class="legitimate">
+                                    🟢 Legitimate
+                                </span>
+
+                            {% endif %}
+
+                        </td>
+
+                        <td>
+
+                            {% if transaction.fraud_probability >= 70 %}
+
+                                <span class="high">
+                                    🔴 High Risk
+                                </span>
+
+                            {% elif transaction.fraud_probability >= 30 %}
+
+                                <span class="medium">
+                                    🟠 Medium Risk
+                                </span>
+
+                            {% else %}
+
+                                <span class="low">
+                                    🟢 Low Risk
+                                </span>
+
+                            {% endif %}
+
+                        </td>
+
+                        <td>
+                            {{ transaction.created_at|date:"d M Y, H:i" }}
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+            {% else %}
+
+            <div class="empty">
+                No transactions available.
+            </div>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+
+    <div class="footer">
+
+        AI-Based Financial Fraud Detection Using Machine Learning
+
+    </div>
+
+
+</body>
+
+</html>

@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <title>Dashboard - AI Fraud Detection</title>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f4f7fb;
+            color: #172554;
+        }
+
+        .navbar {
+            background: #172554;
+            color: white;
+            padding: 18px 8%;
+        }
+
+        .navbar-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 25px;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            font-size: 15px;
+            font-weight: bold;
+        }
+
+        .nav-links a:hover {
+            text-decoration: underline;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 50px auto;
+            padding: 0 20px;
+        }
+
+        .title {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .title h1 {
+            font-size: 38px;
+            margin-bottom: 10px;
+        }
+
+        .title p {
+            color: #64748b;
+            font-size: 17px;
+        }
+
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+        }
+
+        .card {
+            background: white;
+            padding: 30px 20px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+        }
+
+        .card h2 {
+            font-size: 36px;
+            margin: 10px 0;
+        }
+
+        .card p {
+            color: #64748b;
+            font-weight: bold;
+        }
+
+        .chart-card {
+            background: white;
+            margin-top: 30px;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+        }
+
+        .chart-card h2 {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .chart-container {
+            max-width: 450px;
+            height: 350px;
+            margin: auto;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 70px;
+            padding-bottom: 30px;
+            color: #94a3b8;
+        }
+
+        @media (max-width: 800px) {
+
+            .cards {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+        }
+
+        @media (max-width: 500px) {
+
+            .cards {
+                grid-template-columns: 1fr;
+            }
+
+            .logo {
+                font-size: 18px;
+            }
+
+            .nav-links {
+                gap: 10px;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+    <!-- Navigation Bar -->
+
+    <div class="navbar">
+
+        <div class="navbar-content">
+
+            <div class="logo">
+                AI Fraud Detection System
+            </div>
+
+            <div class="nav-links">
+
+                <a href="/">Home</a>
+
+                <a href="/dashboard/">Dashboard</a>
+
+                <a href="/history/">History</a>
+
+                <a href="/logout/">Logout</a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- Dashboard -->
+
+    <div class="container">
+
+
+        <div class="title">
+
+            <h1>My Dashboard</h1>
+
+            <p>
+                Transaction analysis and fraud detection summary
+            </p>
+
+        </div>
+
+
+        <!-- Summary Cards -->
+
+        <div class="cards">
+
+
+            <div class="card">
+
+                <p>Total Transactions</p>
+
+                <h2>
+                    {{ total_transactions }}
+                </h2>
+
+            </div>
+
+
+            <div class="card">
+
+                <p>Fraudulent Transactions</p>
+
+                <h2>
+                    {{ fraud_transactions }}
+                </h2>
+
+            </div>
+
+
+            <div class="card">
+
+                <p>Legitimate Transactions</p>
+
+                <h2>
+                    {{ legitimate_transactions }}
+                </h2>
+
+            </div>
+
+
+            <div class="card">
+
+                <p>Average Fraud Probability</p>
+
+                <h2>
+                    {{ average_probability }}%
+                </h2>
+
+            </div>
+
+
+        </div>
+
+
+        <!-- Doughnut Chart -->
+
+        <div class="chart-card">
+
+            <h2>Transaction Analysis</h2>
+
+            <div class="chart-container">
+
+                <canvas id="fraudChart"></canvas>
+
+            </div>
+
+        </div>
+
+
+    </div>
+
+
+    <!-- Footer -->
+
+    <div class="footer">
+
+        AI-Based Financial Fraud Detection Using Machine Learning
+
+    </div>
+
+
+    <script>
+
+        const fraudCount = {{ fraud_transactions }};
+
+        const legitimateCount = {{ legitimate_transactions }};
+
+        const ctx = document.getElementById("fraudChart");
+
+
+        new Chart(ctx, {
+
+            type: "doughnut",
+
+            data: {
+
+                labels: [
+                    "Fraudulent",
+                    "Legitimate"
+                ],
+
+                datasets: [{
+
+                    data: [
+                        fraudCount,
+                        legitimateCount
+                    ]
+
+                }]
+
+            },
+
+            options: {
+
+                responsive: true,
+
+                maintainAspectRatio: false,
+
+                plugins: {
+
+                    legend: {
+
+                        position: "bottom"
+
+                    }
+
+                }
+
+            }
+
+        });
+
+    </script>
+
+
+</body>
+
+</html>
